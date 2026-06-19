@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import SearchFilterSidebar, { FilterState } from '@/components/SearchFilterSidebar';
 import { ListingSkeleton } from '@/components/ui/LoadingSkeleton';
@@ -9,7 +9,7 @@ import { useToast } from '@/components/ui/Toast';
 import { MapPin, Briefcase, DollarSign, Calendar, Bookmark, BookmarkCheck } from 'lucide-react';
 import Link from 'next/link';
 
-export default function JobsPage() {
+function JobsPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { user } = useAuth();
@@ -152,7 +152,7 @@ export default function JobsPage() {
 
       {/* Main Jobs Listing Container */}
       <div className="flex-grow space-y-6">
-        
+
         {/* Summary header */}
         <div className="flex items-center justify-between">
           <div>
@@ -185,16 +185,15 @@ export default function JobsPage() {
           <div className="space-y-4">
             {jobs.map((job) => {
               const isSaved = savedJobIds.includes(job.id);
-              
+
               return (
                 <div
                   key={job.id}
-                  className={`group relative rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow dark:border-slate-800 dark:bg-slate-900 transition-all ${
-                    job.isFeatured ? 'ring-2 ring-primary-500/10 border-primary-200 dark:border-primary-900/40' : ''
-                  }`}
+                  className={`group relative rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow dark:border-slate-800 dark:bg-slate-900 transition-all ${job.isFeatured ? 'ring-2 ring-primary-500/10 border-primary-200 dark:border-primary-900/40' : ''
+                    }`}
                 >
                   <div className="flex gap-4 items-start">
-                    
+
                     {/* Logo */}
                     <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500 font-bold text-lg dark:bg-slate-800 dark:text-slate-400">
                       {job.employer.logoUrl ? (
@@ -227,11 +226,10 @@ export default function JobsPage() {
                         {/* Bookmark Button */}
                         <button
                           onClick={(e) => toggleSaveJob(job.id, e)}
-                          className={`rounded-lg p-2 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 ${
-                            isSaved 
-                              ? 'text-accent-500 bg-accent-50/20 border-accent-200 dark:border-accent-950 dark:bg-accent-950/20' 
+                          className={`rounded-lg p-2 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 ${isSaved
+                              ? 'text-accent-500 bg-accent-50/20 border-accent-200 dark:border-accent-950 dark:bg-accent-950/20'
                               : 'text-slate-400 hover:text-slate-600'
-                          }`}
+                            }`}
                           title={isSaved ? "Remove Bookmark" : "Save Job"}
                         >
                           {isSaved ? <BookmarkCheck className="h-4.5 w-4.5" /> : <Bookmark className="h-4.5 w-4.5" />}
@@ -248,9 +246,9 @@ export default function JobsPage() {
                         </span>
                         {!job.hideSalary && (job.salaryMin || job.salaryMax) && (
                           <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400">
-                            {job.salaryMin ? `₹${job.salaryMin >= 100000 ? `${(job.salaryMin/100000).toFixed(1).replace('.0', '')}L` : `${(job.salaryMin/1000).toFixed(0)}k/mo`}` : ''}
+                            {job.salaryMin ? `₹${job.salaryMin >= 100000 ? `${(job.salaryMin / 100000).toFixed(1).replace('.0', '')}L` : `${(job.salaryMin / 1000).toFixed(0)}k/mo`}` : ''}
                             {job.salaryMin && job.salaryMax ? ' - ' : ''}
-                            {job.salaryMax ? `₹${job.salaryMax >= 100000 ? `${(job.salaryMax/100000).toFixed(1).replace('.0', '')}L` : `${(job.salaryMax/1000).toFixed(0)}k/mo`}` : ''}
+                            {job.salaryMax ? `₹${job.salaryMax >= 100000 ? `${(job.salaryMax / 100000).toFixed(1).replace('.0', '')}L` : `${(job.salaryMax / 1000).toFixed(0)}k/mo`}` : ''}
                           </span>
                         )}
                         {job.isUrgent && (
@@ -288,4 +286,13 @@ export default function JobsPage() {
       </div>
     </div>
   );
+
 }
+export default function JobsPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <JobsPageContent />
+    </Suspense>
+  );
+}
+
