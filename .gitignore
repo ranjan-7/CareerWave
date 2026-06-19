@@ -1,0 +1,23 @@
+
+# Dependencies
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+
+# Next.js build files
+.next/
+frontend/.next/
+
+# Environment files
+.env
+.env.*
+
+# Database
+*.db
+
+# Uploads
+backend/public/uploads/*
+!backend/public/uploads/.gitkeep
+
+# Logs
+*.log

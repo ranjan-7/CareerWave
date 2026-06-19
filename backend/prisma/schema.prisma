@@ -1,0 +1,156 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id               String              @id @default(cuid())
+  email            String              @unique
+  passwordHash     String
+  role             String              // "SEEKER", "EMPLOYER", "ADMIN"
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  
+  seekerProfile    JobSeekerProfile?
+  employerProfile  EmployerProfile?
+  
+  messagesSent     Message[]           @relation("SentMessages")
+  messagesReceived Message[]           @relation("ReceivedMessages")
+  notifications    Notification[]
+  savedJobs        SavedJob[]
+  reviewsWritten   Review[]            @relation("WrittenReviews")
+}
+
+model JobSeekerProfile {
+  id           String        @id @default(cuid())
+  userId       String        @unique
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  fullName     String
+  headline     String?
+  bio          String?
+  location     String?
+  skills       String        // Comma-separated or JSON list of skills
+  experience   String        // JSON array of work experience
+  education    String        // JSON array of education details
+  resumeUrl    String?
+  portfolioUrl String?
+  linkedinUrl  String?
+  githubUrl    String?
+  visibility   String        @default("PUBLIC") // "PUBLIC", "EMPLOYERS_ONLY", "PRIVATE"
+  openToWork   Boolean       @default(true)
+  
+  applications Application[]
+}
+
+model EmployerProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  companyName String
+  logoUrl     String?
+  coverUrl    String?
+  description String?
+  industry    String?
+  size        String?  // e.g. "1-10", "11-50", "501-1000"
+  location    String?
+  websiteUrl  String?
+  linkedinUrl String?
+  
+  jobs        Job[]
+  reviews     Review[]
+}
+
+model Job {
+  id           String           @id @default(cuid())
+  employerId   String
+  employer     EmployerProfile  @relation(fields: [employerId], references: [id], onDelete: Cascade)
+  
+  title        String
+  description  String
+  requirements String
+  skills       String           // Comma-separated or JSON list of required skills
+  location     String
+  workMode     String           // "ON_SITE", "HYBRID", "REMOTE"
+  jobType      String           // "FULL_TIME", "PART_TIME", "CONTRACT", "INTERNSHIP"
+  salaryMin    Int?
+  salaryMax    Int?
+  hideSalary   Boolean          @default(false)
+  status       String           @default("ACTIVE") // "ACTIVE", "PAUSED", "CLOSED", "DRAFT"
+  isFeatured   Boolean          @default(false)
+  isUrgent     Boolean          @default(false)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  deadline     DateTime?
+  
+  applications Application[]
+  savedBy      SavedJob[]
+}
+
+model Application {
+  id               String           @id @default(cuid())
+  jobId            String
+  job              Job              @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  seekerId         String
+  seeker           JobSeekerProfile @relation(fields: [seekerId], references: [id], onDelete: Cascade)
+  
+  resumeUrl        String           // Snapshot/reference of the resume used
+  coverLetter      String?
+  status           String           @default("APPLIED") // "APPLIED", "REVIEWED", "SHORTLISTED", "INTERVIEW", "OFFER", "REJECTED", "HIRED"
+  screeningAnswers String?          // JSON map of answers to custom questions
+  internalNotes    String?
+  rating           Int?             // Candidate score 1-5
+  appliedAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+}
+
+model SavedJob {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobId     String
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, jobId])
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  senderId   String
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiverId String
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+  content    String
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String   // "APPLICATION_STATUS", "NEW_APPLICATION", "MESSAGE", "JOB_ALERT"
+  title     String
+  message   String
+  link      String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Review {
+  id        String          @id @default(cuid())
+  companyId String
+  company   EmployerProfile @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User            @relation("WrittenReviews", fields: [authorId], references: [id], onDelete: Cascade)
+  
+  rating    Int             // 1 to 5
+  comment   String?
+  createdAt DateTime        @default(now())
+}
