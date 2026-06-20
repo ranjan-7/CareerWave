@@ -181,7 +181,7 @@ export default function ResumeBuilderPage() {
           githubUrl: user?.profile?.githubUrl || '',
           visibility: user?.profile?.visibility || 'PUBLIC',
           openToWork: user?.profile?.openToWork ?? true,
-          resumeUrl: user?.profile?.resumeUrl || 'http://localhost:5000/uploads/generated_resume.pdf' // Simulate resume file generation
+          resumeUrl: user?.profile?.resumeUrl || 'http://localhost:5001/uploads/generated_resume.pdf' // Simulate resume file generation
         }),
       });
 

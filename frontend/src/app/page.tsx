@@ -31,7 +31,7 @@ export default async function HomePage() {
   let featuredJobs: any[] = [];
 
   try {
-    const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+    const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
     const res = await fetch(`${BACKEND_URL}/api/jobs/homepage`, { cache: 'no-store' });
     if (res.ok) {
       const data = await res.json();

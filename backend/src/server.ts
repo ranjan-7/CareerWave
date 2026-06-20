@@ -19,7 +19,7 @@ import adminRoutes from './routes/adminRoutes';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 // Middleware setup
 app.use(cors({

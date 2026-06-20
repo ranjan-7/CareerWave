@@ -56,7 +56,7 @@ export default async function JobDetailPage({ params }: JobPageProps) {
   let job: any = null;
 
   try {
-    const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+    const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
     const res = await fetch(`${BACKEND_URL}/api/jobs/${params.id}`, { cache: 'no-store' });
     if (res.ok) {
       const data = await res.json();
@@ -104,7 +104,7 @@ export default async function JobDetailPage({ params }: JobPageProps) {
     } : undefined,
   };
 
-  const skillsList = job.skills.split(',').map(s => s.trim()).filter(Boolean);
+  const skillsList = job.skills.split(',').map((s: string) => s.trim()).filter(Boolean);
 
   const formatWorkMode = (mode: string) => {
     return mode.replace('_', ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
@@ -203,7 +203,7 @@ export default async function JobDetailPage({ params }: JobPageProps) {
                 Key Skills & Technologies
               </h2>
               <div className="flex flex-wrap gap-2">
-                {skillsList.map((skill, idx) => (
+                {skillsList.map((skill: string, idx: number) => (
                   <span 
                     key={idx} 
                     className="inline-flex items-center gap-1.5 rounded-lg bg-primary-50 px-3 py-1.5 text-xs font-semibold text-primary-600 dark:bg-slate-800 dark:text-primary-400"
