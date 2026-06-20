@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/Toast';
+import { apiFetch } from '@/lib/api';
 import Button from './ui/Button';
 import Modal from './ui/Modal';
 import Input from './ui/Input';
@@ -68,7 +69,7 @@ export default function JobApplyButton({
     formData.append('file', file);
 
     try {
-      const res = await fetch('/api/upload', {
+      const res = await apiFetch('/api/upload', {
         method: 'POST',
         body: formData,
       });
@@ -97,9 +98,8 @@ export default function JobApplyButton({
 
     setSubmitting(true);
     try {
-      const res = await fetch('/api/applications', {
+      const res = await apiFetch('/api/applications', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           jobId,
           resumeUrl,

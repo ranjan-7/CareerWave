@@ -6,6 +6,7 @@ import SearchFilterSidebar, { FilterState } from '@/components/SearchFilterSideb
 import { ListingSkeleton } from '@/components/ui/LoadingSkeleton';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/Toast';
+import { apiFetch } from '@/lib/api';
 import { MapPin, Briefcase, DollarSign, Calendar, Bookmark, BookmarkCheck } from 'lucide-react';
 import Link from 'next/link';
 
@@ -38,7 +39,7 @@ function JobsPageContent() {
       if (filters.jobType) queryParams.set('jobType', filters.jobType);
       if (filters.salaryMin) queryParams.set('salaryMin', filters.salaryMin);
 
-      const res = await fetch(`/api/jobs?${queryParams.toString()}`);
+      const res = await apiFetch(`/api/jobs?${queryParams.toString()}`);
       if (res.ok) {
         const data = await res.json();
         setJobs(data.jobs);
@@ -55,7 +56,7 @@ function JobsPageContent() {
   const fetchSavedJobs = async () => {
     if (!user || user.role !== 'SEEKER') return;
     try {
-      const res = await fetch('/api/jobs/save');
+      const res = await apiFetch('/api/jobs/save');
       if (res.ok) {
         const data = await res.json();
         setSavedJobIds(data.savedJobs.map((j: any) => j.id));
@@ -107,7 +108,7 @@ function JobsPageContent() {
 
     try {
       if (isCurrentlySaved) {
-        const res = await fetch(`/api/jobs/save?jobId=${jobId}`, {
+        const res = await apiFetch(`/api/jobs/save?jobId=${jobId}`, {
           method: 'DELETE',
         });
         if (res.ok) {
@@ -115,9 +116,8 @@ function JobsPageContent() {
           toast('Job removed from bookmarks', 'info');
         }
       } else {
-        const res = await fetch('/api/jobs/save', {
+        const res = await apiFetch('/api/jobs/save', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ jobId }),
         });
         if (res.ok) {

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/Toast';
+import { apiFetch } from '@/lib/api';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
 import Button from '@/components/ui/Button';
@@ -51,9 +52,8 @@ export default function PostJobPage() {
 
     setSubmitting(true);
     try {
-      const res = await fetch('/api/jobs', {
+      const res = await apiFetch('/api/jobs', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title,
           description,

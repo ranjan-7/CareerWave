@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/Toast';
+import { apiFetch } from '@/lib/api';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
@@ -51,7 +52,7 @@ export default function CandidateSearchPage() {
       if (skillQuery) queryParams.set('skills', skillQuery);
       if (locQuery) queryParams.set('location', locQuery);
 
-      const res = await fetch(`/api/employer/candidates?${queryParams.toString()}`);
+      const res = await apiFetch(`/api/employer/candidates?${queryParams.toString()}`);
       if (res.ok) {
         const data = await res.json();
         setCandidates(data.candidates);

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
+import { apiFetch } from '@/lib/api';
 import { 
   Briefcase, 
   Bell, 
@@ -55,7 +56,7 @@ export default function Header() {
   const fetchNotifications = async () => {
     if (!user) return;
     try {
-      const res = await fetch('/api/notifications');
+      const res = await apiFetch('/api/notifications');
       if (res.ok) {
         const data = await res.json();
         setNotifications(data.notifications);
@@ -77,9 +78,8 @@ export default function Header() {
 
   const markAllAsRead = async () => {
     try {
-      const res = await fetch('/api/notifications', {
+      const res = await apiFetch('/api/notifications', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({}),
       });
       if (res.ok) {
@@ -93,9 +93,8 @@ export default function Header() {
 
   const markOneAsRead = async (id: string) => {
     try {
-      const res = await fetch('/api/notifications', {
+      const res = await apiFetch('/api/notifications', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id }),
       });
       if (res.ok) {

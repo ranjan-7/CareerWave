@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/Toast';
+import { apiFetch } from '@/lib/api';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
@@ -59,9 +60,8 @@ export default function SeekerOnboardingPage() {
     setSubmitting(true);
     try {
       // Put initial details into the seeker profile
-      const res = await fetch('/api/seeker/profile', {
+      const res = await apiFetch('/api/seeker/profile', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           fullName: user?.profile?.fullName || 'Job Seeker',
           headline: jobTitle,

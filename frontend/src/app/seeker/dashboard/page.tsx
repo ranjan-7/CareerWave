@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/Toast';
+import { apiFetch } from '@/lib/api';
 import { DashboardSkeleton } from '@/components/ui/LoadingSkeleton';
 import { 
   Briefcase, 
@@ -45,7 +46,7 @@ export default function SeekerDashboard() {
     setFetchingData(true);
     try {
       // 1. Fetch applications
-      const appRes = await fetch('/api/applications');
+      const appRes = await apiFetch('/api/applications');
       let apps = [];
       if (appRes.ok) {
         const appData = await appRes.json();
@@ -54,7 +55,7 @@ export default function SeekerDashboard() {
       }
 
       // 2. Fetch saved jobs
-      const saveRes = await fetch('/api/jobs/save');
+      const saveRes = await apiFetch('/api/jobs/save');
       let bookmarks = [];
       if (saveRes.ok) {
         const saveData = await saveRes.json();
@@ -63,7 +64,7 @@ export default function SeekerDashboard() {
       }
 
       // 3. Fetch jobs for recommendation (matching skills)
-      const jobsRes = await fetch('/api/jobs');
+      const jobsRes = await apiFetch('/api/jobs');
       if (jobsRes.ok) {
         const jobsData = await jobsRes.json();
         const allJobs = jobsData.jobs;
@@ -108,7 +109,7 @@ export default function SeekerDashboard() {
 
   const handleUnsaveJob = async (jobId: string) => {
     try {
-      const res = await fetch(`/api/jobs/save?jobId=${jobId}`, {
+      const res = await apiFetch(`/api/jobs/save?jobId=${jobId}`, {
         method: 'DELETE',
       });
       if (res.ok) {

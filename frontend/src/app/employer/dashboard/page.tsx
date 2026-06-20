@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/Toast';
+import { apiFetch } from '@/lib/api';
 import { DashboardSkeleton } from '@/components/ui/LoadingSkeleton';
 import { 
   Plus, 
@@ -47,7 +48,7 @@ export default function EmployerDashboard() {
 
   const fetchAnalytics = async () => {
     try {
-      const res = await fetch('/api/employer/analytics');
+      const res = await apiFetch('/api/employer/analytics');
       if (res.ok) {
         const data = await res.json();
         setAnalytics(data.analytics);
@@ -72,7 +73,7 @@ export default function EmployerDashboard() {
     }
 
     try {
-      const res = await fetch(`/api/jobs/${jobId}`, {
+      const res = await apiFetch(`/api/jobs/${jobId}`, {
         method: 'DELETE',
       });
       

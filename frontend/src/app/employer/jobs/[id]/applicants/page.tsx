@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/Toast';
+import { apiFetch } from '@/lib/api';
 import KanbanBoard, { Candidate } from '@/components/KanbanBoard';
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
@@ -62,14 +63,14 @@ export default function JobApplicantsPage({ params }: ApplicantsPageProps) {
     setFetching(true);
     try {
       // 1. Fetch Job Info
-      const jobRes = await fetch(`/api/jobs/${jobId}`);
+      const jobRes = await apiFetch(`/api/jobs/${jobId}`);
       if (jobRes.ok) {
         const jobData = await jobRes.json();
         setJobInfo(jobData.job);
       }
 
       // 2. Fetch Applicants
-      const appRes = await fetch(`/api/applications?jobId=${jobId}`);
+      const appRes = await apiFetch(`/api/applications?jobId=${jobId}`);
       if (appRes.ok) {
         const appData = await appRes.json();
         setCandidates(appData.applications);
@@ -91,9 +92,8 @@ export default function JobApplicantsPage({ params }: ApplicantsPageProps) {
   // Handle kanban drag/click stage transition
   const handleMoveStage = async (applicationId: string, newStage: string) => {
     try {
-      const res = await fetch(`/api/applications/${applicationId}`, {
+      const res = await apiFetch(`/api/applications/${applicationId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStage }),
       });
 
@@ -119,7 +119,7 @@ export default function JobApplicantsPage({ params }: ApplicantsPageProps) {
 
   const fetchApplicationDetails = async (applicationId: string) => {
     try {
-      const res = await fetch(`/api/applications/${applicationId}`);
+      const res = await apiFetch(`/api/applications/${applicationId}`);
       if (res.ok) {
         const data = await res.json();
         const fullApp = data.application;
@@ -166,9 +166,8 @@ export default function JobApplicantsPage({ params }: ApplicantsPageProps) {
     setSavingDetails(true);
 
     try {
-      const res = await fetch(`/api/applications/${selectedCandidate.id}`, {
+      const res = await apiFetch(`/api/applications/${selectedCandidate.id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           status: stageVal,
           internalNotes: noteText,

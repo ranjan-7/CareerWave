@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { apiFetch } from '@/lib/api';
 
 interface User {
   id: string;
@@ -34,7 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchSession = async () => {
     try {
-      const res = await fetch('/api/auth/session');
+      const res = await apiFetch('/api/auth/session');
       if (res.ok) {
         const data = await res.json();
         setUser(data.user);
@@ -55,9 +56,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await apiFetch('/api/auth/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
@@ -75,9 +75,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const register = async (regData: any) => {
     try {
-      const res = await fetch('/api/auth/register', {
+      const res = await apiFetch('/api/auth/register', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(regData),
       });
       const data = await res.json();
@@ -95,7 +94,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST' });
+      await apiFetch('/api/auth/logout', { method: 'POST' });
       setUser(null);
       router.push('/');
       router.refresh();

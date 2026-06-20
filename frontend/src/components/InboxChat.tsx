@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/Toast';
+import { apiFetch } from '@/lib/api';
 import { Send, MessageSquare, Clock, User } from 'lucide-react';
 import Button from './ui/Button';
 
@@ -36,7 +37,7 @@ export default function InboxChat() {
   const fetchThreads = async (silent = false) => {
     if (silent === false) setLoadingThreads(true);
     try {
-      const res = await fetch('/api/messages');
+      const res = await apiFetch('/api/messages');
       if (res.ok) {
         const data = await res.json();
         setThreads(data.threads);
@@ -62,7 +63,7 @@ export default function InboxChat() {
   // Helper: fetch profile of a partner if they aren't in the thread list yet
   const fetchPartnerProfile = async (partnerId: string) => {
     try {
-      const res = await fetch(`/api/auth/session`); // fallback session endpoint returns profile if admin or we mock check
+      const res = await apiFetch(`/api/auth/session`); // fallback session endpoint returns profile if admin or we mock check
       // For simplicity, we can construct a placeholder or search in threads.
       // If we are starting a chat with an employer from the dashboard, we find their company details.
     } catch (e) {
@@ -74,7 +75,7 @@ export default function InboxChat() {
   const fetchMessages = async (partnerId: string, silent = false) => {
     if (silent === false) setLoadingMessages(true);
     try {
-      const res = await fetch(`/api/messages?userId=${partnerId}`);
+      const res = await apiFetch(`/api/messages?userId=${partnerId}`);
       if (res.ok) {
         const data = await res.json();
         setMessages(data.messages);
@@ -140,9 +141,8 @@ export default function InboxChat() {
     setTypedMessage('');
 
     try {
-      const res = await fetch('/api/messages', {
+      const res = await apiFetch('/api/messages', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           receiverId: selectedUserId,
           content: text,

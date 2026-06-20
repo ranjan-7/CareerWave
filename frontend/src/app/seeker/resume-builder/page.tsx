@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/Toast';
+import { apiFetch } from '@/lib/api';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { FileText, UploadCloud, Sparkles, Plus, Trash2, Save, Download, Eye } from 'lucide-react';
@@ -165,9 +166,8 @@ export default function ResumeBuilderPage() {
 
     setSaving(true);
     try {
-      const res = await fetch('/api/seeker/profile', {
+      const res = await apiFetch('/api/seeker/profile', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           fullName,
           headline,

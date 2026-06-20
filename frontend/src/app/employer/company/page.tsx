@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/Toast';
+import { apiFetch } from '@/lib/api';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import Select from '@/components/ui/Select';
@@ -64,7 +65,7 @@ export default function CompanyProfilePage() {
     formData.append('file', file);
 
     try {
-      const res = await fetch('/api/upload', {
+      const res = await apiFetch('/api/upload', {
         method: 'POST',
         body: formData,
       });
@@ -93,9 +94,8 @@ export default function CompanyProfilePage() {
 
     setSubmitting(true);
     try {
-      const res = await fetch('/api/employer/profile', {
+      const res = await apiFetch('/api/employer/profile', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           companyName,
           logoUrl,

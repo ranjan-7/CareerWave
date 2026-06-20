@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/Toast';
+import { apiFetch } from '@/lib/api';
 import { DashboardSkeleton } from '@/components/ui/LoadingSkeleton';
 import { 
   ShieldCheck, 
@@ -73,14 +74,14 @@ export default function AdminDashboard() {
     setFetching(true);
     try {
       // 1. Fetch Stats
-      const statsRes = await fetch('/api/admin/stats');
+      const statsRes = await apiFetch('/api/admin/stats');
       if (statsRes.ok) {
         const statsData = await statsRes.json();
         setStats(statsData.stats);
       }
 
       // 2. Fetch jobs
-      const jobsRes = await fetch('/api/jobs');
+      const jobsRes = await apiFetch('/api/jobs');
       if (jobsRes.ok) {
         const jobsData = await jobsRes.json();
         // Decorate jobs with a mock moderation state
@@ -92,7 +93,7 @@ export default function AdminDashboard() {
       }
 
       // 3. Fetch users
-      const usersRes = await fetch('/api/admin/users');
+      const usersRes = await apiFetch('/api/admin/users');
       if (usersRes.ok) {
         const usersData = await usersRes.json();
         // Decorate users with a mock verified status
@@ -129,7 +130,7 @@ export default function AdminDashboard() {
       return;
     }
     try {
-      const res = await fetch(`/api/jobs/${jobId}`, { method: 'DELETE' });
+      const res = await apiFetch(`/api/jobs/${jobId}`, { method: 'DELETE' });
       if (res.ok) {
         toast('Job listing removed successfully', 'success');
         setJobsList(prev => prev.filter(j => j.id !== jobId));
@@ -162,7 +163,7 @@ export default function AdminDashboard() {
       return;
     }
     try {
-      const res = await fetch(`/api/admin/users?userId=${userId}`, { method: 'DELETE' });
+      const res = await apiFetch(`/api/admin/users?userId=${userId}`, { method: 'DELETE' });
       if (res.ok) {
         toast('User deleted successfully', 'success');
         setUsersList(prev => prev.filter(u => u.id !== userId));
